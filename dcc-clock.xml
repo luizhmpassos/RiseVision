@@ -41,12 +41,12 @@
 	    }
 
 	    #clock_hora{
-	    	font-size: 28px;
+	    	font-size: 36px;
 	    	text-align: center;
 	    }
 
 	    #clock_data{
-	    	font-size: 18px;
+	    	font-size: 14px;
 	    	text-align: justify;
 	    }
 
