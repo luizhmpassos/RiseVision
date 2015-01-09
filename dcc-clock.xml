@@ -18,6 +18,7 @@
 	<EnumValue value="europeanDate" display_value="dd/mm/yyyy"/>
 	<EnumValue value="mediumDate" display_value="mmm dd yyyy"/>
 	<EnumValue value="longDate" display_value="Month dd, yyyy"/>
+	<EnumValue value="monthDay" display_value="Month dd"/>
     </UserPref>
     <UserPref name="text_font-style" display_name="Font" datatype="string" default_value=".text_font-style{font-family:Verdana, Verdana, Geneva, sans-serif;color:rgb(0, 0, 0);font-size:20px;}"/>
     <UserPref name="backgroundColor" display_name="Background Color" default_value="" datatype="string"/>
@@ -44,6 +45,7 @@
 	 
 	<script type="text/javascript">	 
 	    var months = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+	    var monthsRed = new Array("Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez");
 	    
 	    var prefs = new gadgets.Prefs();
 	    
@@ -143,6 +145,10 @@
 		    }
 		    else if (prefs.getString("dateFormat") == "europeanDate") {
 			    dispTime += "&nbsp;&nbsp;" + day+ "/" + (month + 1) + "/" + year;
+		    }
+		    else if (prefs.getString("dateFormat") == "monthDay") {		
+		    	var aux = dispTime;    	
+			    dispTime = "&nbsp;&nbsp;" + monthsRed[month] + "&nbsp;" + day + aux;
 		    }
 		}
 		
