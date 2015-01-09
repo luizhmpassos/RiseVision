@@ -148,7 +148,7 @@
 		    }
 		    else if (prefs.getString("dateFormat") == "monthDay") {		
 		    	var aux = dispTime;    	
-			    dispTime = "&nbsp;&nbsp;" + monthsRed[month] + "&nbsp;" + day + aux;
+			    dispTime = "&nbsp;&nbsp;" + monthsRed[month] + "&nbsp;" + day + "&nbsp;&nbsp;" + aux;
 		    }
 		}
 		
