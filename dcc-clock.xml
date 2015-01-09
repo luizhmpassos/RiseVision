@@ -45,7 +45,8 @@
 	 
 	<script type="text/javascript">	 
 	    var months = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
-	    var monthsRed = new Array("Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez");
+	    var monthsRed = new Array("Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro");
+	    var diaSemana = new Array("Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab");
 	    
 	    var prefs = new gadgets.Prefs();
 	    
@@ -147,8 +148,11 @@
 			    dispTime += "&nbsp;&nbsp;" + day+ "/" + (month + 1) + "/" + year;
 		    }
 		    else if (prefs.getString("dateFormat") == "monthDay") {		
-		    	var aux = dispTime;    	
-			    dispTime = "&nbsp;&nbsp;" + monthsRed[month] + "&nbsp;" + day + "&nbsp;&nbsp;" + aux;
+		    	var aux = dispTime;
+		    	var diaS = diaSemana[currentTime.getDay()];
+
+		    	dispTime = "<p id='clock_hora'>" + aux + "</p>";
+		    	dispTime += "<p id='clock_data'>" + diaS + ",&nbsp;" + day + "&nbsp;de&nbsp;" + monthsRed[month] + "</p>";
 		    }
 		}
 		
