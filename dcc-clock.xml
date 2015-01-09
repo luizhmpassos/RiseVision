@@ -40,6 +40,18 @@
 	    -khtml-user-select: none; 
 	    }
 
+	    #clock_hora{
+	    	font-size: 28px;
+	    	text-align: center;
+	    }
+
+	    #clock_data{
+	    	font-size: 18px;
+	    	text-align: justify;
+	    }
+
+
+
 	   __UP_text_font-style__
 	 </style>
 	 
