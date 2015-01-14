@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+    <ModulePrefs title="Month Calendar" height="400" title_url="http://www.risevision.com/help/users/what-are-gadgets/free-gadgets/rise-vision-clock/">
+	<Require feature="rpc" />
+	<Optional feature="rise-api">
+	    <Param name="reports_ready" />
+	</Optional>
+    </ModulePrefs>
+    <UserPref name="id" display_name="ID" default_value="" datatype="hidden" />
+    <Content type="html">
+    <![CDATA[
+	<style type="text/css">
+	    body, div {
+	    background: transparent;
+	    text-align: center;
+	    
+	    /* user can't select text on a touchscreen */
+	    user-select: none;
+	    -moz-user-select: none;
+	    -webkit-user-select: none;
+	    -khtml-user-select: none; 
+	    }
+
+	   __UP_text_font-style__
+	 </style>
+	 
+
+	<script type="text/javascript">	 
+	    var months = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+	    
+	    var prefs = new gadgets.Prefs();
+	    
+	    //Issue 1041 - Disable right-click.
+	    window.oncontextmenu = function() {
+		return false;
+	    };	    
+	    
+	    function play() {
+	    
+	    }
+	    
+	    function pause() {
+	    
+	    }
+	    
+	    function stop() {
+	    
+	    }
+	    
+	    function readyEvent() {
+		gadgets.rpc.call('', 'rsevent_ready', null, prefs.getString("id"), true, true, true, true, true);
+	    }
+	    
+	    function doneEvent() {
+		gadgets.rpc.call('', 'rsevent_done', null, prefs.getString("id"));
+	    }
+	    
+	    function initClock() {
+		var id = prefs.getString("id");
+		var backgroundColor = prefs.getString("backgroundColor");
+	 
+		// register your RPC calls (communicate with the viewer application) 
+		// each one of these is a command. the Viewer will send this command, and the function
+		// in the command will be called. For example the first one, once rscmd_play_ + id is called, the play();
+		// function is called		
+		if (id !== null && id != "") {
+			gadgets.rpc.register("rscmd_play_" + id, play);
+			gadgets.rpc.register("rscmd_pause_" + id, pause);
+			gadgets.rpc.register("rscmd_stop_" + id, stop);
+		} 
+	 
+
+		if (backgroundColor !== null && backgroundColor != "") {
+			document.body.style.background = backgroundColor;
+		} 
+	 
+		clock();
+		readyEvent();
+	    }
+	    
+	    function clock() {
+			
+			var dispTime = "Injected!";
+		
+			document.getElementById("month_calendar_next").innerHTML = dispTime;
+			setTimeout("clock()", 300000);
+	    }
+	    
+	    gadgets.util.registerOnLoadHandler(initClock); 
+	</script>
+	 
+	<div id="month_calendar" class="text_font-style" style="height:100%;width:100%;">
+		<div id="month_calendar_actual">
+			<iframe src="https://www.google.com/calendar/embed?showTitle=0&amp;showNav=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;height=400&amp;wkst=1&amp;hl=pt_BR&amp;bgcolor=%23990000&amp;src=ls65k1pj4n8m6pudancii5d35s%40group.calendar.google.com&amp;color=%23182C57&amp;ctz=America%2FSao_Paulo" style=" border:solid 1px #777 " width="500" height="400" frameborder="0" scrolling="no"></iframe>
+		</div>
+
+		<div id="month_calendar_next">
+
+		</div>
+	</div>
+    ]]>
+    </Content>
+</Module>
