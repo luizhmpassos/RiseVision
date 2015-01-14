@@ -6,7 +6,7 @@
 	    <Param name="reports_ready" />
 	</Optional>
     </ModulePrefs>
-    <UserPref name="id" display_name="ID" default_value="" datatype="hidden" />
+    <UserPref name="id" display_name="ID" default_value="mc01" datatype="hidden" />
     <Content type="html">
     <![CDATA[
 	<style type="text/css">
