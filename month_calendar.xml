@@ -21,6 +21,10 @@
 	    -khtml-user-select: none; 
 	    }
 
+	    #month_calendar > div{
+	    	margin: 10px;
+	    }
+
 	   __UP_text_font-style__
 	 </style>
 	 
@@ -97,12 +101,11 @@
 	</script>
 	 
 	<div id="month_calendar" class="text_font-style" style="height:100%;width:100%;">
-		<h2> Month Calendar </h2>
-		<div id="month_calendar_actual">
+		<div id="month_calendar_actual" >
 			<iframe src="https://www.google.com/calendar/embed?showTitle=0&amp;showNav=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;height=400&amp;wkst=1&amp;hl=pt_BR&amp;bgcolor=%23990000&amp;src=ls65k1pj4n8m6pudancii5d35s%40group.calendar.google.com&amp;color=%23182C57&amp;ctz=America%2FSao_Paulo" style=" border:solid 1px #777 " width="500" height="400" frameborder="0" scrolling="no"></iframe>
 		</div>
 
-		<div id="month_calendar_next">
+		<div id="month_calendar_next" >
 
 		</div>
 	</div>
