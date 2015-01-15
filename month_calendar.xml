@@ -79,10 +79,17 @@
 	    }
 	    
 	    function clock() {
-			
-			var dispTime = "Injected!";
-		
-			document.getElementById("month_calendar_next").innerHTML = dispTime;
+
+			var hoje = new Date();
+			var ultimo_dia = new Date(hoje.getFullYear(), hoje.getMonth()+2, 0);
+
+			var inicio = ultimo_dia.getFullYear()+""+("00"+(ultimo_dia.getMonth()+1)).slice(-2)+""+"01";
+			var fim = ultimo_dia.getFullYear()+""+("00"+(ultimo_dia.getMonth()+1)).slice(-2)+""+ultimo_dia.getDate();
+			var dates = inicio+"%2F"+fim;
+
+			var iframe = "<iframe src=\"https://www.google.com/calendar/embed?showTitle=0&amp;showNav=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;height=400&amp;wkst=1&amp;hl=pt_BR&amp;bgcolor=%23990000&amp;src=ls65k1pj4n8m6pudancii5d35s%40group.calendar.google.com&amp;color=%23182C57&amp;ctz=America%2FSao_Paulo&amp;dates="+dates+"\" style=\"border:solid 1px #777\" width=\"500\" height=\"400\" frameborder=\"0\" scrolling=\"no\"></iframe>"
+
+			document.getElementById("month_calendar_next").innerHTML = iframe;
 			setTimeout("clock()", 300000);
 	    }
 	    
