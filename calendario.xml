@@ -41,10 +41,9 @@
 
        __UP_text_font-style__
      </style>
-     
-
-    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
-    <script type="text/javascript">      
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript">
         
         var prefs = new gadgets.Prefs();
         
@@ -141,7 +140,7 @@
 
             });
 
-            document.getElementById("month_calendar_next").innerHTML = iframe;
+            document.getElementById("eventos").innerHTML = "chegou!";
             setTimeout("clock()", 300000);
         }
         
