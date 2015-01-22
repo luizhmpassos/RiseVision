@@ -27,6 +27,7 @@
     <UserPref name="rsA" display_name="Alignment" default_value="mc" datatype="hidden"/>
     <Content type="html">
     <![CDATA[
+
     <style type="text/css">
         body, div {
         background: transparent;
@@ -40,9 +41,22 @@
         }
 
        __UP_text_font-style__
-     </style>
-    
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  
+        #eventos{background: #CCC; width: 1300px; padding: 0;}
+        #eventos > div {float: left; border: 1px solid; padding: 10px; width: 30%; margin: 0.5%; max-width: 30%;}
+        #eventos ul {margin: 0; padding: 0; padding-bottom: 20px;}
+        #eventos ul li{display: block; margin: 10px 0;}
+        #eventos ul li.clear{background: yellow; clear: both;}
+
+        #eventos div ul li.evt_summary{font-size: 20px; font-weight: bold; border-bottom: 2px solid #333;}
+
+        #eventos:after, #eventos:before{display: table; content: " ";}
+        #eventos:after{clear: both;}    
+    </style>
+
+
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script> -->
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
     <script type="text/javascript">
         
         var prefs = new gadgets.Prefs();
@@ -108,44 +122,164 @@
         
         function clock() {
             var backgroundColor = prefs.getString("backgroundColor");
-            var hoje = new Date();
-            var ultimo_dia = new Date(hoje.getFullYear(), hoje.getMonth()+2, 0);
-
-            var inicio = ultimo_dia.getFullYear()+""+("00"+(ultimo_dia.getMonth()+1)).slice(-2)+""+"01";
-            var fim = ultimo_dia.getFullYear()+""+("00"+(ultimo_dia.getMonth()+1)).slice(-2)+""+ultimo_dia.getDate();
-            var dates = inicio+"%2F"+fim;            
 
             var key = "AIzaSyBcVaj4FrVL2bm5ZZ0dsZJtiDD-_ac-_lM";
-            var url = "https://www.googleapis.com/calendar/v3/calendars/ls65k1pj4n8m6pudancii5d35s%40group.calendar.google.com/events?key="+key;
+            var calendar_id = "ls65k1pj4n8m6pudancii5d35s%40group.calendar.google.com";
+            var url_base = "https://www.googleapis.com/calendar/v3/calendars/"+calendar_id+"/events";
+            var num_dias = 15;
+            var query = "?"+getFilterDate(num_dias)+"&key="+key;
+            var url = url_base+query;             
+
+            var eventos = [];
+
+            // Inicializa a estrutura que conterá os HTMLs com os eventos de cada dia
+            for(var j=0; j<num_dias; j++){
+                var auxDate = new Date();
+                auxDate.setDate(auxDate.getDate()+j);
+                eventos[auxDate.getDate()+"/"+(auxDate.getMonth()+1)] = [];
+            }
+
 
             $.getJSON( url, function( data ) {
-                var items = [];
-                items.push("<h2> " + data.summary + "</h2>");
-                items.push("<h4> " + data.description + "</h4>");
+                var items = [];         
+                $("#eventos").append("<h2> " + data.summary + "</h2>");
+                $("#eventos").append("<h4> " + data.description + "</h4>");
+            
+                $.when($.each( data.items, function( key, val ) {
 
-                $.each( data.items, function( key, val ) {
+                    var novoItem = "";
+            
+                    var hasTimeStt = (typeof val.start.dateTime !== 'undefined');
+                    var dateStt = (hasTimeStt) ? val.start.dateTime : val.start.date;
+                    var inicio = new Date(dateStt);
 
-                    items.push( "<li id='" + key + "'>" + ($.isEmptyObject(val.start.dateTime) ? val.start.date : val.start.dateTime)  + ": " + val.summary +  "</li>" );
+                    var hasTimeEnd = (typeof val.end.dateTime !== "undefined");
+                    var dateEnd = (hasTimeEnd) ? val.end.dateTime : val.end.date;
+                    var fim = new Date(dateEnd);
 
-                    /*for(valores in val){
-                        items.push( "<li id='" + key + "'>" + valores + ": " + valores[val] +  "</li>" );
+                    // Problema: Eventos sem info de tempo, ficam como começando as 00:00 (GTM) e voltam um dia no horário local!
+                    // Correção para que os eventos sem data fiquem no fuso horário local
+                    if (!hasTimeStt){
+                        inicio.setTime(inicio.getTime() + (inicio.getTimezoneOffset() * 60 * 1000));
                     }
-                    */
-                });
 
-                $( "<ul/>", {
-                    "class": "my-new-list",
-                    html: items.join( "" )
-                }).appendTo( "#eventos" );
+                    if (!hasTimeEnd){
+                        fim.setTime(fim.getTime() + (fim.getTimezoneOffset() * 60 * 1000)); // Adiciona a hora local ao final do evento;
+                    }
 
+                    if (!hasTimeStt && !hasTimeEnd){
+                        val['allDay'] = true;
+                    }
+                    else{
+                        val['allDay'] = false;
+                    }
+
+                    val['inicio'] = inicio;
+                    val['fim'] = fim;
+
+
+                    // Adicionando o HTML do evento ao array para exibição
+                    novoItem += getFormatedEvent(val);
+                    var chave = inicio.getDate()+"/"+(inicio.getMonth()+1);
+                    if(chave in eventos){
+                        eventos[chave].push(novoItem);
+                    }
+                })).done(function(){       
+
+                    for(var dia in eventos){
+                      if(typeof eventos[dia] !== 'undefined'){
+                        if(eventos[dia].length > 0){
+                          var content = "<div class='day_event'>";
+                          content += "<h2> "+dia+"</h2>";
+                          for(var evt in eventos[dia]){                
+                            content += eventos[dia][evt] + "<hr />";
+                          }
+                          content += "</div>"
+
+                          $("#eventos").append(content);
+                        }
+                      }  
+                    }
+              });
             });
 
-            document.getElementById("eventos").innerHTML = "chegou!";
             setTimeout("clock()", 300000);
         }
         
         gadgets.util.registerOnLoadHandler(initClock); 
+
+
+
+        function getFilterDate(num_days){
+    var hoje = new Date();
+    var ultimo_dia = new Date();
+    ultimo_dia.setDate(hoje.getDate() + num_days-1);
+
+    hoje.setHours(0);
+    hoje.setMinutes(0);
+    hoje.setSeconds(0);
+
+    ultimo_dia.setHours(23);
+    ultimo_dia.setMinutes(59);
+    ultimo_dia.setSeconds(59);
+
+    var filtro = "timeMin="+hoje.toISOString()+"&timeMax="+ultimo_dia.toISOString();
+    return filtro;
+  }
+
+
+  // Retorna a Div contendo as informações do evento
+  function getFormatedEvent(evento){
+     
+      var item = "<ul>";
+      var time = "";
+      var description = getFormatedDescription(evento.description);
+
+      if (!evento.allDay){
+        time = evento.inicio.getHours() + ":" + ("00" + evento.inicio.getMinutes()).slice(-2) + " - " + evento.fim.getHours() + ":" + ("00" + evento.fim.getMinutes() + "00").slice(-2);
+        time = "<li class='evt_time'>" + time + "</li>";
+      }
+
+      item += "<li class='evt_summary'>"+evento.summary+"</li>";
+      item += time;
+      item += (description.length > 0) ? "<li class='evt_desc'>"+description+"</li>" : "";
+      item += (typeof evento.location !== 'undefined') ? "<li class='evt_location'>"+evento.location+"</li>" : "";
+      
+      item += "<li>AllDay: "+(evento.allDay ? "Yes" : "No")+"</li>"; 
+      item += "</ul>";
+
+      return item;
+  }
+
+
+
+  function getFormatedDescription(description){
+    var aux = "";
+    var img_token = "\#img=";   
+    var position;   
+
+    if (typeof description !== 'undefined') {
+
+      description = description.toString();
+
+      if((position = description.search(img_token)) != -1){
+
+        var offset = position + img_token.length;
+        if(description.substr(offset).search(/[ ]/) != -1){
+          aux = "<img src='"+description.substring((offset), (description.substr(offset).search(/[ ]/)+(offset)))+"' />";
+        }
+        else{
+          aux = "<img src='"+description.substr(offset)+"' />"; 
+        }
+      }
+      else{
+        aux = description; 
+      }
+    }
+    return aux;    
+  }
     </script>
+    
          
     <div id="eventos" class="text_font-style" style="height:100%;width:100%;">
     </div>
