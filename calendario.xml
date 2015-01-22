@@ -42,7 +42,7 @@
 
        __UP_text_font-style__
   
-        #eventos{background: #CCC; width: 1300px; padding: 0;}
+        #eventos{background: #CCC; padding: 0;}
         #eventos > div {float: left; border: 1px solid; padding: 10px; width: 30%; margin: 0.5%; max-width: 30%;}
         #eventos ul {margin: 0; padding: 0; padding-bottom: 20px;}
         #eventos ul li{display: block; margin: 10px 0;}
@@ -279,10 +279,11 @@
     return aux;    
   }
     </script>
-    
+
          
-    <div id="eventos" class="text_font-style" style="height:100%;width:100%;">
+    <div id="eventos" class="text_font-style" style="height:100%;width:100%;">     
     </div>
+
     ]]>
     </Content>
 </Module>
