@@ -7,6 +7,8 @@
     </Optional>
     </ModulePrefs>
     <UserPref name="id" display_name="ID" default_value="" datatype="hidden" />
+    <UserPref name="diaTeste" display_name="Data para Teste: " datatype="string" default_value="" />
+
     <Content type="html">
     <![CDATA[
  
@@ -111,7 +113,9 @@
 
             // Variáveis específicas do Gadget
 
-            var diaTeste = "2015-01-26T00:00:00-02:00";
+            var diaTeste = prefs.getString("diaTeste");
+
+
             var key = "AIzaSyBcVaj4FrVL2bm5ZZ0dsZJtiDD-_ac-_lM";
             var calendar_id = "pfm7v287mvrjp7huoajadiap7c%40group.calendar.google.com";
             var url_base = "https://www.googleapis.com/calendar/v3/calendars/"+calendar_id+"/events";
@@ -223,7 +227,7 @@
 
 
         function getFilterDate(num_days){
-            var diaTeste = "2015-01-26T00:00:00-02:00";
+            var diaTeste = prefs.getString("diaTeste");
             var hoje = new Date(diaTeste);
             var ultimo_dia = new Date();
             ultimo_dia.setDate(hoje.getDate() + num_days-1);
