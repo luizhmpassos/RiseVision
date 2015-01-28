@@ -18,6 +18,9 @@
         #eventos ul li{display: block; margin: 10px 0;}
         #eventos ul li.clear{background: yellow; clear: both;}
 
+
+        __UP_text_font-style__
+
         #eventos:after, #eventos:before{display: table; content: " ";}
         #eventos:after{clear: both;}
         
@@ -26,13 +29,13 @@
 
         img {max-width: 100px; max-height: 100px;}
         img {border-radius: 5px 20px 5px; border: 5px solid white;}
+
       </style>
 
 
 
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script> -->
     <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
-
     <script type="text/javascript">
         
         var prefs = new gadgets.Prefs();
@@ -75,34 +78,33 @@
         }
         
         function initClock() {
-        var id = prefs.getString("id");
-        var backgroundColor = prefs.getString("backgroundColor");
-     
-        // register your RPC calls (communicate with the viewer application) 
-        // each one of these is a command. the Viewer will send this command, and the function
-        // in the command will be called. For example the first one, once rscmd_play_ + id is called, the play();
-        // function is called 
-        if (id !== null && id != "") {
-            gadgets.rpc.register("rscmd_play_" + id, play);
-            gadgets.rpc.register("rscmd_pause_" + id, pause);
-            gadgets.rpc.register("rscmd_stop_" + id, stop);
-        } 
-     
-        if (backgroundColor !== null && backgroundColor != "") {
-            document.body.style.background = backgroundColor;
-        } 
-     
-        clock();
-        readyEvent();
+            var id = prefs.getString("id");
+            var backgroundColor = prefs.getString("backgroundColor");
+         
+            // register your RPC calls (communicate with the viewer application) 
+            // each one of these is a command. the Viewer will send this command, and the function
+            // in the command will be called. For example the first one, once rscmd_play_ + id is called, the play();
+            // function is called 
+            if (id !== null && id != "") {
+                gadgets.rpc.register("rscmd_play_" + id, play);
+                gadgets.rpc.register("rscmd_pause_" + id, pause);
+                gadgets.rpc.register("rscmd_stop_" + id, stop);
+            } 
+         
+            if (backgroundColor !== null && backgroundColor != "") {
+                document.body.style.background = backgroundColor;
+            } 
+         
+            clock();
+            readyEvent();
         }
         
         function clock() {
             var backgroundColor = prefs.getString("backgroundColor");
 
-
             // Variáveis específicas do Gadget
 
-            var diaTeste = "2015-01-27T00:00:00-02:00";
+            var diaTeste = "2015-01-26T00:00:00-02:00";
             var key = "AIzaSyBcVaj4FrVL2bm5ZZ0dsZJtiDD-_ac-_lM";
             var calendar_id = "pfm7v287mvrjp7huoajadiap7c%40group.calendar.google.com";
             var url_base = "https://www.googleapis.com/calendar/v3/calendars/"+calendar_id+"/events";
@@ -170,7 +172,7 @@
                     var num_aniversarios = getNumBirthdays(eventos);
                     if (num_aniversarios > 0){
                         var titulo = (num_aniversarios > 1) ? "Aniversariantes" : "Aniversariante";
-                        titulo += "do dia";
+                        titulo += " do dia";
                         $("#eventos").append("<h2 id='gadget_title'> "+titulo+" </h2>");
                     }         
 
@@ -275,10 +277,12 @@
         }
         return aux;
       }
+
     </script>
 
          
-    <div id="eventos" class="text_font-style" style="height:100%;width:100%;">     
+    <div id="eventos" class="text_font-style" style="height:100%;width:100%;">
+        <h3> Aniversariantes </h3>
     </div>
 
     ]]>
