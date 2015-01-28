@@ -9,8 +9,15 @@
     <UserPref name="id" display_name="ID" default_value="" datatype="hidden" />
     <Content type="html">
     <![CDATA[
+ 
+    <style type="text/css">
 
-    <style>
+        /* user can't select text on a touchscreen */
+        user-select: none;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none; 
+        }
 
         #eventos{background: #CCC; width: 1300px; padding: 0;}
         #eventos > div {float: left; border: 1px solid; padding: 10px; width: 30%; margin: 0.5%; max-width: 30%;}
@@ -216,6 +223,7 @@
 
 
         function getFilterDate(num_days){
+            var diaTeste = "2015-01-26T00:00:00-02:00";
             var hoje = new Date(diaTeste);
             var ultimo_dia = new Date();
             ultimo_dia.setDate(hoje.getDate() + num_days-1);
