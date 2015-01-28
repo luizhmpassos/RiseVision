@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+    <ModulePrefs title="Aniversariantes" height="400" title_url="http://www.risevision.com/help/users/what-are-gadgets/free-gadgets/rise-vision-clock/">
+    <Require feature="rpc" />
+    <Optional feature="rise-api">
+        <Param name="reports_ready" />
+    </Optional>
+    </ModulePrefs>
+    <UserPref name="id" display_name="ID" default_value="" datatype="hidden" />
+    <Content type="html">
+    <![CDATA[
+
+    <style>
+
+        #eventos{background: #CCC; width: 1300px; padding: 0;}
+        #eventos > div {float: left; border: 1px solid; padding: 10px; width: 30%; margin: 0.5%; max-width: 30%;}
+        #eventos ul {margin: 0; padding: 0; padding-bottom: 20px;}
+        #eventos ul li{display: block; margin: 10px 0;}
+        #eventos ul li.clear{background: yellow; clear: both;}
+
+        #eventos:after, #eventos:before{display: table; content: " ";}
+        #eventos:after{clear: both;}
+        
+        #eventos ul li{display: block; float: left; margin: 10px;}
+        #eventos ul li p{font-size:10px;}
+
+        img {max-width: 100px; max-height: 100px;}
+        img {border-radius: 5px 20px 5px; border: 5px solid white;}
+      </style>
+
+
+
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script> -->
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+
+    <script type="text/javascript">
+        
+        var prefs = new gadgets.Prefs();
+        
+        //Issue 1041 - Disable right-click.
+        window.oncontextmenu = function() {
+        return false;
+        };
+        
+        //Add Analytics code.
+        var _gaq = _gaq || [];
+        
+        _gaq.push(['_setAccount', 'UA-41395348-14']);
+        _gaq.push(['_trackPageview']);
+      
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+        
+        function play() {
+        
+        }
+        
+        function pause() {
+        
+        }
+        
+        function stop() {
+        
+        }
+        
+        function readyEvent() {
+        gadgets.rpc.call('', 'rsevent_ready', null, prefs.getString("id"), true, true, true, true, true);
+        }
+        
+        function doneEvent() {
+        gadgets.rpc.call('', 'rsevent_done', null, prefs.getString("id"));
+        }
+        
+        function initClock() {
+        var id = prefs.getString("id");
+        var backgroundColor = prefs.getString("backgroundColor");
+     
+        // register your RPC calls (communicate with the viewer application) 
+        // each one of these is a command. the Viewer will send this command, and the function
+        // in the command will be called. For example the first one, once rscmd_play_ + id is called, the play();
+        // function is called 
+        if (id !== null && id != "") {
+            gadgets.rpc.register("rscmd_play_" + id, play);
+            gadgets.rpc.register("rscmd_pause_" + id, pause);
+            gadgets.rpc.register("rscmd_stop_" + id, stop);
+        } 
+     
+        if (backgroundColor !== null && backgroundColor != "") {
+            document.body.style.background = backgroundColor;
+        } 
+     
+        clock();
+        readyEvent();
+        }
+        
+        function clock() {
+            var backgroundColor = prefs.getString("backgroundColor");
+
+
+            // Variáveis específicas do Gadget
+
+            var diaTeste = "2015-01-27T00:00:00-02:00";
+            var key = "AIzaSyBcVaj4FrVL2bm5ZZ0dsZJtiDD-_ac-_lM";
+            var calendar_id = "pfm7v287mvrjp7huoajadiap7c%40group.calendar.google.com";
+            var url_base = "https://www.googleapis.com/calendar/v3/calendars/"+calendar_id+"/events";
+            var num_dias = 1;
+            var query = "?"+getFilterDate(num_dias)+"&key="+key;
+            var url = url_base+query; 
+            var eventos = [];
+
+
+            // Inicializa a estrutura que conterá os HTMLs com os eventos de cada dia
+            for(var j=0; j<num_dias; j++){
+                var auxDate = new Date(diaTeste);
+                auxDate.setDate(auxDate.getDate()+j);
+                eventos[auxDate.getDate()+"/"+(auxDate.getMonth()+1)] = [];
+            }
+
+
+            // getJson
+            $.getJSON( url, function( data ) {
+                var items = [];         
+      
+                $.when($.each( data.items, function( key, val ) {
+
+                  var novoItem = "";
+                
+                  var hasTimeStt = (typeof val.start.dateTime !== 'undefined');
+                  var dateStt = (hasTimeStt) ? val.start.dateTime : val.start.date;
+                  var inicio = new Date(dateStt);
+
+                  var hasTimeEnd = (typeof val.end.dateTime !== "undefined");
+                  var dateEnd = (hasTimeEnd) ? val.end.dateTime : val.end.date;
+                  var fim = new Date(dateEnd);
+
+                  // Problema: Eventos sem info de tempo, ficam como começando as 00:00 (GTM) e voltam um dia no horário local!
+                  // Correção para que os eventos sem data fiquem no fuso horário local
+                  if (!hasTimeStt){
+                    inicio.setTime(inicio.getTime() + (inicio.getTimezoneOffset() * 60 * 1000));
+                  }
+
+                  if (!hasTimeEnd){
+                    fim.setTime(fim.getTime() + (fim.getTimezoneOffset() * 60 * 1000)); // Adiciona a hora local ao final do evento;
+                  }
+
+                  if (!hasTimeStt && !hasTimeEnd){
+                    val['allDay'] = true;
+                  }
+                  else{
+                    val['allDay'] = false;
+                  }
+
+                  val['inicio'] = inicio;
+                  val['fim'] = fim;
+
+                  // Adicionando o HTML do evento ao array para exibição
+
+                  novoItem += getFormatedEvent(val);
+                  var chave = inicio.getDate()+"/"+(inicio.getMonth()+1);
+                  if(chave in eventos){
+                    eventos[chave].push(novoItem);
+                  }
+
+
+                })).done(function(){
+        
+                    var num_aniversarios = getNumBirthdays(eventos);
+                    if (num_aniversarios > 0){
+                        var titulo = (num_aniversarios > 1) ? "Aniversariantes" : "Aniversariante";
+                        titulo += "do dia";
+                        $("#eventos").append("<h2 id='gadget_title'> "+titulo+" </h2>");
+                    }         
+
+                    var nivers = [];          
+                    for(var dia in eventos){
+                        if(typeof eventos[dia] !== 'undefined'){
+                            if(eventos[dia].length > 0){                
+                                for(var evt in eventos[dia]){                  
+                                    nivers.push("<li>"+eventos[dia][evt]+"</li>");
+                                }                    
+                            }
+                        }
+                    }        
+
+                    $( "<ul/>", {
+                        "class": "my-new-list",
+                        html: nivers.join( "" )
+                    }).appendTo( "#eventos" );
+
+                });
+            });
+            setTimeout("clock()", 300000);
+        }
+
+        
+        gadgets.util.registerOnLoadHandler(initClock); 
+
+
+        // Funções específicas do gadget
+
+        function getNumBirthdays(eventos){
+            for(var dia in eventos){
+              if(typeof eventos[dia] !== 'undefined'){
+                if(eventos[dia].length > 0){
+                  return eventos[dia].length;
+                }
+              }
+            }
+            return 0;
+        }
+
+
+        function getFilterDate(num_days){
+            var hoje = new Date(diaTeste);
+            var ultimo_dia = new Date();
+            ultimo_dia.setDate(hoje.getDate() + num_days-1);
+
+            hoje.setHours(0);
+            hoje.setMinutes(0);
+            hoje.setSeconds(0);
+
+            ultimo_dia.setHours(23);
+            ultimo_dia.setMinutes(59);
+            ultimo_dia.setSeconds(59);
+
+            var filtro = "timeMin="+hoje.toISOString()+"&timeMax="+ultimo_dia.toISOString();
+            return filtro;
+        }
+
+      // Retorna a Div contendo as informações do evento
+      function getFormatedEvent(evento){
+         
+          var item = "<div>";
+          var description = getFormatedDescription(evento.description);
+          
+          item += (description.length > 0) ? description : "";
+          item += "<p>"+evento.summary+"</p>"; // Nome do Aniversariante   
+
+          item += "</div>";
+
+          return item;
+      }
+
+
+      function getFormatedDescription(description){
+        var aux = "";
+        var img_token = "\#img=";   
+        var position;   
+
+        if (typeof description !== 'undefined') {
+
+          description = description.toString();
+
+          if((position = description.search(img_token)) != -1){
+
+            var offset = position + img_token.length;        
+            var image_url = "";
+
+            if(description.substr(offset).search(/[ ]/) != -1){          
+              image_url = description.substring((offset), (description.substr(offset).search(/[ ]/)+(offset)));          
+            }
+            else{          
+              image_url = description.substr(offset);
+            }
+
+           aux = "<img src='"+image_url+"' />";
+
+          }
+          else{
+            aux = description;
+          }
+        }
+        return aux;
+      }
+    </script>
+
+         
+    <div id="eventos" class="text_font-style" style="height:100%;width:100%;">     
+    </div>
+
+    ]]>
+    </Content>
+</Module>
