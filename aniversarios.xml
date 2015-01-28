@@ -127,7 +127,12 @@
 
             // Inicializa a estrutura que conterá os HTMLs com os eventos de cada dia
             for(var j=0; j<num_dias; j++){
-                var auxDate = new Date(diaTeste);
+                if(diaTeste != null && diaTeste != ""){
+                    var auxDate = new Date(diaTeste);
+                }
+                else{
+                    var auxDate = new Date();
+                }
                 auxDate.setDate(auxDate.getDate()+j);
                 eventos[auxDate.getDate()+"/"+(auxDate.getMonth()+1)] = [];
             }
@@ -180,6 +185,8 @@
 
                 })).done(function(){
         
+                    $("#eventos").empty();
+
                     var num_aniversarios = getNumBirthdays(eventos);
                     if (num_aniversarios > 0){
                         var titulo = (num_aniversarios > 1) ? "Aniversariantes" : "Aniversariante";
@@ -205,7 +212,8 @@
 
                 });
             });
-            setTimeout("clock()", 300000);
+
+            setTimeout("clock()", 120000);
         }
 
         
@@ -228,7 +236,14 @@
 
         function getFilterDate(num_days){
             var diaTeste = prefs.getString("diaTeste");
-            var hoje = new Date(diaTeste);
+
+            if(diaTeste != null && diaTeste != ""){
+                var hoje = new Date(diaTeste);
+            }
+            else{
+                var hoje = new Date();
+            }
+            
             var ultimo_dia = new Date();
             ultimo_dia.setDate(hoje.getDate() + num_days-1);
 
