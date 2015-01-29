@@ -14,8 +14,18 @@
  
     <style type="text/css">
 
-
         body{background: transparent;}
+
+        #eventos ul:after, #eventos ul:before{display: table; content: " ";}
+        #eventos ul:after{clear: both;}
+
+        #eventos ul{padding: 0; margin: 0; border: 0;}
+
+        #eventos ul li{display: block; float: left; margin: 10px;}
+        #eventos ul li p{font-size:10px; text-align: center;}
+
+        div.img_container{overflow: hidden; width: 80px; height: 80px; border: 4px solid #ccc; border-radius: 50%;}
+        div.img_container img {max-width: 80px; max-height: 80px; width: 100%;} 
 
         /* user can't select text on a touchscreen */
         user-select: none;
@@ -24,23 +34,7 @@
         -khtml-user-select: none; 
         }
 
-        #eventos{width: 1300px; padding: 0;}
-        #eventos > div {float: left; border: 1px solid; padding: 10px; width: 30%; margin: 0.5%; max-width: 30%;}
-        #eventos ul {margin: 0; padding: 0; padding-bottom: 20px;}
-        #eventos ul li{display: block; margin: 10px 0;}
-        #eventos ul li.clear{background: yellow; clear: both;}
-
-
         __UP_text_font-style__
-
-        #eventos:after, #eventos:before{display: table; content: " ";}
-        #eventos:after{clear: both;}
-        
-        #eventos ul li{display: block; float: left; margin: 10px;}
-        #eventos ul li p{font-size:10px;}
-
-        img {max-width: 100px; max-height: 100px;}
-        img {border-radius: 5px 20px 5px; border: 5px solid white;}
 
       </style>
 
@@ -194,7 +188,7 @@
                     if (num_aniversarios > 0){
                         var titulo = (num_aniversarios > 1) ? "Aniversariantes" : "Aniversariante";
                         titulo += " do dia";
-                        $("#eventos").append("<h2 id='gadget_title'> "+titulo+" </h2>");
+                        //$("#eventos").append("<h2 id='gadget_title'> "+titulo+" </h2>");
                     }         
 
                     var nivers = [];          
@@ -298,7 +292,7 @@
               image_url = description.substr(offset);
             }
 
-           aux = "<img src='"+image_url+"' />";
+           aux = "<div class='img_container'><img src='"+image_url+"' /></div>";
 
           }
           else{
