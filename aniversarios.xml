@@ -15,8 +15,8 @@
     <style type="text/css">
 
 
-        body{background: red;}
-        
+        body{background: transparent;}
+
         /* user can't select text on a touchscreen */
         user-select: none;
         -moz-user-select: none;
